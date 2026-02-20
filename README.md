@@ -35,7 +35,7 @@ build_sif my_repo ./my_app.sif
 Now you can run the sif file like a Docker container!
 
 ```bash
-apptainer run --compat ./my_app.sif my_command 
+apptainer exec --compat ./my_app.sif my_command 
 ```
 
 See the [Apptainer documentation](https://apptainer.org/docs/user/main/cli/apptainer_run.html) for more info.
