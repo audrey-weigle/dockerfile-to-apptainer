@@ -34,6 +34,7 @@ dest_parent="$(dirname "$dest_file")"
 if [[ "$dockerfile" == EMPTY ]]; then
   apptainer run -B /etc/machine-id \
     --compat \
+    --fakeroot \
     -B "$source_folder":/src:ro \
     -B "$dest_parent":/dst \
     "$base"/dockerfile_to_sqfs "/src" "/dst" \
@@ -42,6 +43,7 @@ else
   dockerfile_parent="$(dirname "$dockerfile")"
   dockerfile_basename="$(basename "$dockerfile")"
   apptainer run --compat \
+    --fakeroot \
     -B /etc/machine-id \
     -B "$source_folder":/src:ro \
     -B "$dest_parent":/dst \
