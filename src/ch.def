@@ -1,0 +1,26 @@
+Bootstrap: docker
+From: debian:bookworm-slim
+
+%labels
+    Author audrey.weigle@dbmi.emory.edu
+    Version v0.0.1
+    MyLabel charliecloud docker builder
+
+%help
+    This is an apptainer binary that builds an arbitrary folder
+    with a Dockerfile to a .sqfs file. Run with --help for usage.
+
+    A sqfs file is compatible with apptainer, but if you want a .sif
+    file, you can run this afterward:
+
+      apptainer build my_container.sif my_container.sqfs
+
+%files
+ ./src/config /config
+ ./src/build_container.sh /usr/bin/build_container.sh 
+
+%post
+  apt-get -y update && apt-get -y upgrade && apt-get install -y charliecloud
+
+%runscript
+  /usr/bin/build_container.sh "$@"

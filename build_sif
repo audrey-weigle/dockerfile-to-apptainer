@@ -1,0 +1,60 @@
+#!/bin/bash
+# Build a .sif file from the folder with a Dockerfile.
+# 
+# Arguments:
+#  - source_folder: Folder containing a Dockerfile (or specify the path of the 
+#    Dockerfile with --dockerfile=<path>)
+#  - dest_file: Destination .sif file
+#  - [--dockerfile=<path>]: Optional path to a Dockerfile.
+# Exit codes:
+#  - 0: Success.
+#  - 1: Failure.
+
+
+# Get the source base folder
+SCRIPT_PATH=$(realpath -m "$0")
+
+base=$(dirname "$SCRIPT_PATH")/. # Project base
+source "$base"/config/utils.sh
+source "$base"/config/config.sh
+set -euo pipefail
+
+
+# ===================
+# Parse the arguments
+# ===================
+
+parse_args "source_folder dest_file [--dockerfile=<path>]" "$@"
+
+# ====
+# MAIN
+# ====
+
+dest_parent="$(dirname "$dest_file")"
+if [[ "$dockerfile" == EMPTY ]]; then
+  apptainer run -B /etc/machine-id \
+    --compat \
+    -B "$source_folder":/src:ro \
+    -B "$dest_parent":/dst \
+    "$base"/dockerfile_to_sqfs "/src" "/dst" \
+      --sqfs-filename=image.sqfs
+else
+  dockerfile_parent="$(dirname "$dockerfile")"
+  dockerfile_basename="$(basename "$dockerfile")"
+  apptainer run --compat \
+    -B /etc/machine-id \
+    -B "$source_folder":/src:ro \
+    -B "$dest_parent":/dst \
+    -B "$dockerfile_parent":/dockerfile:ro \
+    "$base"/dockerfile_to_sqfs "/src" "/dst" \
+      --dockerfile="/dockerfile/$dockerfile_basename" \
+      --sqfs-filename=image.sqfs
+fi
+
+msg "Building sif file..."
+apptainer build "$dest_file" "$dest_parent"/image.sqfs
+
+msg "Removing .sqfs file..."
+rm -v "$dest_parent"/image.sqfs
+
+msg "Done!"
