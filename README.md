@@ -1,6 +1,6 @@
 # Dockerfile to Apptainer
 
-Build an apptainer `.sif` file from a Dockerfile.
+Build an apptainer `.sif` file from a Dockerfile. Under the hood this runs on [Charliecloud](https://charliecloud.io/) inside Apptainer.
 
 ## Requirements
 
