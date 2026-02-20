@@ -4,7 +4,7 @@ Build an apptainer `.sif` file from a Dockerfile.
 
 ## Requirements
 
-Apptainer with `--fakeroot`, `make`.
+Apptainer with `--fakeroot`, `make`. Runs on the cluster nodes at DBMI.
 
 ## Building and installing
 
